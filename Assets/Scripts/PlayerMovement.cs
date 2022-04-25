@@ -8,6 +8,9 @@ public class PlayerMovement : MonoBehaviour
     public float speed = 7.0f;
     public float jumpForce;
     public float gravity = -20;
+    public float GroundDistance = 0.1f;
+    public LayerMask Ground;
+
 
     private CharacterController myCharacterController;
     private bool jump = false;
@@ -18,21 +21,25 @@ public class PlayerMovement : MonoBehaviour
     private int line = 1;
     private int targetLine = 1;
     private Animator myAnimator;
-    private bool isOnGround = true;
-    
+    private Transform _groundChecker;
+    private bool _isGrounded = true;
+
+
+
 
     // Start is called before the first frame update
     void Start()
     {
         myCharacterController = GetComponent<CharacterController>();
         myAnimator = GetComponent<Animator>();
+        _groundChecker = transform.GetChild(0);
+
     }
 
     // Update is called once per frame
     void Update()
     {
         direction.z = speed;
-        direction.y += gravity * Time.deltaTime;
 
         //turnLeft = Input.GetKeyDown(KeyCode.A);
         //turnRight = Input.GetKeyDown(KeyCode.D);
@@ -41,17 +48,26 @@ public class PlayerMovement : MonoBehaviour
         roll = Input.GetKeyDown(KeyCode.S);
         attack = Input.GetKeyDown(KeyCode.Mouse0);
 
+        _isGrounded = Physics.CheckSphere(_groundChecker.position, GroundDistance, Ground, QueryTriggerInteraction.Ignore);
+
+
         //if (turnLeft)
         //    transform.Rotate(new Vector3(0f, -90f, 0f));
         //else if (turnRight)
         //    transform.Rotate(new Vector3(0f, 90f, 0f));
-       
-        if (jump && isOnGround)
-            Jump();
-        else if (roll)
-            myAnimator.Play("Roll");
-        else if (attack)
-            myAnimator.Play("Attack");
+        direction.y += gravity * Time.deltaTime;
+        
+
+        if (_isGrounded)
+        {
+            if (jump)
+                Jump();
+            else if (roll)
+                myAnimator.Play("Roll");
+            else if (attack)
+                myAnimator.Play("Attack");
+        }
+        
 
 
         Vector3 pos = gameObject.transform.position;
@@ -110,11 +126,7 @@ public class PlayerMovement : MonoBehaviour
     {
         myAnimator.Play("Jump");
         direction.y = jumpForce;
-        isOnGround = false;
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        isOnGround = true;
-    }
+   
 }

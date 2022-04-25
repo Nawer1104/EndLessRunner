@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class SpawningTile : MonoBehaviour
 {
-    public GameObject tileToSpawn;
+    public GameObject[] tileToSpawn;
     public GameObject spawningTile;
-    public float timeOffset = 0.3f;
-    public float distanceBetweenTiles = 4.5F;
+    public float timeOffset = 0.6f;
+    public float distanceBetweenTiles = 30f;
     public float randomValue = 0.8f;
     private Vector3 previousTilePosition;
     private float startTime;
@@ -16,7 +16,6 @@ public class SpawningTile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
- 
         previousTilePosition = spawningTile.transform.position;
         startTime = Time.time;
     }
@@ -37,10 +36,9 @@ public class SpawningTile : MonoBehaviour
             //}
             Vector3 spawnPos = previousTilePosition + distanceBetweenTiles * mainDirection;
             startTime = Time.time;
-            Instantiate(tileToSpawn, spawnPos, Quaternion.Euler(0, 0, 0));
+            Instantiate(tileToSpawn[Random.Range(0, tileToSpawn.Length)], spawnPos, Quaternion.Euler(0, 0, 0));
             previousTilePosition = spawnPos;
         }
     }
 
-    
 }

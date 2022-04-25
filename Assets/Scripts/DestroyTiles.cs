@@ -13,7 +13,7 @@ public class DestroyTiles : MonoBehaviour
 
     IEnumerator destroy()
     {
-        yield return new WaitForSeconds(9);
+        yield return new WaitForSeconds(15);
         Instantiate(explosion, transform.position, Quaternion.identity); 
         Object.Destroy(this.gameObject);
     }
