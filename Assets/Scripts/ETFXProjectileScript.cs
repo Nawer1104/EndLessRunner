@@ -6,7 +6,8 @@ public class ETFXProjectileScript : MonoBehaviour
     public GameObject impactParticle;
     public GameObject projectileParticle;
     public GameObject muzzleParticle;
-    
+    public float lifeTimePracticle;
+
     [HideInInspector]
     public Vector3 impactNormal; //Used to rotate impactparticle.
  
@@ -14,6 +15,7 @@ public class ETFXProjectileScript : MonoBehaviour
  
     void Start()
     {
+        Invoke(nameof(DestroyProjectile), lifeTimePracticle);
         projectileParticle = Instantiate(projectileParticle, transform.position, transform.rotation) as GameObject;
         projectileParticle.transform.parent = transform;
 		if (muzzleParticle){
@@ -27,11 +29,9 @@ public class ETFXProjectileScript : MonoBehaviour
         if (!hasCollided)
         {
             hasCollided = true;
-            //transform.DetachChildren();
             impactParticle = Instantiate(impactParticle, transform.position, Quaternion.FromToRotation(Vector3.up, impactNormal)) as GameObject;
-            //Debug.DrawRay(hit.contacts[0].point, hit.contacts[0].normal * 1, Color.yellow);
  
-            if (hit.gameObject.CompareTag("Enemy")) // Projectile will destroy objects tagged as Destructible
+            if (hit.gameObject.CompareTag("Enemy")) // Projectile will destroy objects tagged as Enemy
             {
                 Destroy(hit.gameObject);
             }
@@ -40,10 +40,15 @@ public class ETFXProjectileScript : MonoBehaviour
             
             Destroy(projectileParticle, 3f);
             Destroy(impactParticle, 5f);
-            Destroy(gameObject);
+            DestroyProjectile();
             //projectileParticle.Stop();
-			
-			
+
+
         }
+    }
+
+    void DestroyProjectile()
+    {
+        Destroy(gameObject);
     }
 }

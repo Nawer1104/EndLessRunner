@@ -1,4 +1,4 @@
-using System.Collections;
+    using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,11 +6,16 @@ public class PlayerMovement : MonoBehaviour
 {
     private bool turnLeft, turnRight;
     public float speed = 7.0f;
+    public float maxSpeed = 15f;
     public float jumpForce;
-    public float gravity = -20;
+    public float gravity = -20f;
     public float GroundDistance = 0.1f;
     public LayerMask Ground;
-
+    public GameObject[] projectiles;
+    public Transform spawnPosition;
+    [HideInInspector]
+    public int currentProjectile = 0;
+    public float projectileSpeed = 1000;
 
     private CharacterController myCharacterController;
     private bool jump = false;
@@ -24,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
     private Transform _groundChecker;
     private bool _isGrounded = true;
 
-
+    
 
 
     // Start is called before the first frame update
@@ -39,6 +44,11 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (speed < maxSpeed)
+        {
+            speed += 0.1f * Time.deltaTime;
+
+        }
         direction.z = speed;
 
         //turnLeft = Input.GetKeyDown(KeyCode.A);
@@ -60,12 +70,15 @@ public class PlayerMovement : MonoBehaviour
 
         if (_isGrounded)
         {
+           
             if (jump)
-                Jump();
+            {
+                Jump();              
+            }
             else if (roll)
-                myAnimator.Play("Roll");
+                StartCoroutine(Slide());
             else if (attack)
-                myAnimator.Play("Attack");
+                Shoot();
         }
         
 
@@ -126,6 +139,24 @@ public class PlayerMovement : MonoBehaviour
     {
         myAnimator.Play("Jump");
         direction.y = jumpForce;
+    }
+
+   private void Shoot()
+    {
+        myAnimator.Play("Attack");
+        GameObject projectile = Instantiate(projectiles[currentProjectile], spawnPosition.position, Quaternion.identity) as GameObject;
+        projectile.GetComponent<Rigidbody>().AddForce(projectile.transform.forward * projectileSpeed);
+    }
+
+    private IEnumerator Slide()
+    {
+        myAnimator.Play("Roll");
+        myCharacterController.center = new Vector3(0, 0.5f, 0);
+        myCharacterController.height = 1;
+        yield return new WaitForSeconds(0.9f);
+
+        myCharacterController.center = new Vector3(0, 1f, 0);
+        myCharacterController.height = 2;
     }
 
    

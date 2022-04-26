@@ -19,13 +19,9 @@ public class ETFXFireProjectile : MonoBehaviour
 	{
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-
-                GameObject projectile = Instantiate(projectiles[currentProjectile], spawnPosition.position, Quaternion.identity) as GameObject;
-               
+                GameObject projectile = Instantiate(projectiles[currentProjectile], spawnPosition.position, Quaternion.identity) as GameObject;               
                 projectile.GetComponent<Rigidbody>().AddForce(projectile.transform.forward * speed);
-
         }
 	}
-
 }
 }
